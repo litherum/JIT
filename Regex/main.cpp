@@ -56,7 +56,7 @@ public:
     virtual ~Machine() {
     }
 
-    virtual bool run(std::string s) const = 0;
+    virtual bool run(const std::string& s) const = 0;
 };
 
 class Interpreter: public Machine {
@@ -64,7 +64,7 @@ public:
     Interpreter(const NodeCollection&, const Node& startNode, const Node& endNode): startNode(startNode), endNode(endNode) {
     }
 
-    virtual bool run(std::string s) const override {
+    virtual bool run(const std::string& s) const override {
         const Node* state = &startNode;
         for (char c : s) {
             if (Node* n = state->follow(c))
@@ -244,7 +244,7 @@ private:
 
 class JIT: public Machine {
 public:
-    JIT(const NodeCollection& nodes, Node& startNode, Node& endNode) {
+    JIT(const NodeCollection& nodes, const Node& startNode, const Node& endNode) {
         CodeGenerator codeGenerator(nodes, startNode, endNode);
         std::vector<uint8_t> code = codeGenerator.takeMachineCode();
         machineCode.reset(mmap(NULL, code.size(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0));
@@ -264,7 +264,7 @@ public:
         }
     }
     
-    virtual bool run(std::string s) const override {
+    virtual bool run(const std::string& s) const override {
         Tracker t(s, machineCode.get());
         return t.run();
     }
@@ -272,7 +272,7 @@ public:
 private:
     class Tracker {
     public:
-        Tracker(std::string s, void* machineCode): index(0), s(s), machineCode(machineCode) {
+        Tracker(const std::string& s, void* machineCode): index(0), s(s), machineCode(machineCode) {
         }
         
         bool run() {
@@ -317,7 +317,7 @@ private:
     std::unique_ptr<void, Unmapper> machineCode;
 };
 
-std::unique_ptr<Machine> compile(const NodeCollection& nodes, Node& startNode, Node& endNode) {
+std::unique_ptr<Machine> compile(const NodeCollection& nodes, const Node& startNode, const Node& endNode) {
     return std::unique_ptr<JIT>(new JIT(nodes, startNode, endNode));
 }
 
