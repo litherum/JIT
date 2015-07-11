@@ -226,7 +226,6 @@ private:
     const uint8_t POP_RBP = 0x5d;
     const uint8_t REX_000 = 0x48;
     const uint8_t MOV_RR = 0x89;
-    const uint8_t SUB_IM8 = 0x83;
     const uint8_t MOV_MR = 0x8b;
     const uint8_t POP_RDI = 0x5f;
 
