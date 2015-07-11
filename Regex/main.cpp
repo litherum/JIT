@@ -53,6 +53,9 @@ typedef std::set<std::reference_wrapper<Node>, NodeComparator> NodeCollection;
 
 class Machine {
 public:
+    virtual ~Machine() {
+    }
+
     virtual bool run(std::string s) const = 0;
 };
 
