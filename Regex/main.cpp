@@ -98,8 +98,7 @@ public:
 
         machineCode.push_back(JMP);
         startAddressLocation = machineCode.size();
-        for (int i = 0; i < 4; ++i)
-            machineCode.push_back(0);
+        emitPointerSpace();
 
         for (const Node& node : nodes) {
             stateLocations.insert(std::make_pair(&node, machineCode.size()));
@@ -115,8 +114,7 @@ public:
                 machineCode.push_back(c);
                 emitJE();
                 nodeAddressLocations.push_back(std::make_pair(machineCode.size(), std::reference_wrapper<Node>(d)));
-                for (int i = 0; i < 4; ++i)
-                    machineCode.push_back(0);
+                emitPointerSpace();
             });
             emitJMPFail();
         }
@@ -170,41 +168,41 @@ public:
 
         machineCode.push_back(CALL);
         nextCharAddressLocations.insert(machineCode.size());
-        for (int i = 0; i < 4; ++i)
-            machineCode.push_back(0);
+        emitPointerSpace();
     }
     
     void emitJESuccess() {
         emitJE();
         successAddressLocations.insert(machineCode.size());
-        for (int i = 0; i < 4; ++i)
-            machineCode.push_back(0);
+        emitPointerSpace();
     }
     
     void emitJEFail() {
         emitJE();
         failAddressLocations.insert(machineCode.size());
-        for (int i = 0; i < 4; ++i)
-            machineCode.push_back(0);
+        emitPointerSpace();
     }
     
     void emitJMPFail() {
         machineCode.push_back(JMP);
         failAddressLocations.insert(machineCode.size());
-        for (int i = 0; i < 4; ++i)
-            machineCode.push_back(0);
+        emitPointerSpace();
     }
     
     void emitJMPEpilogue() {
         machineCode.push_back(JMP);
         epilogueAddressLocations.insert(machineCode.size());
-        for (int i = 0; i < 4; ++i)
-            machineCode.push_back(0);
+        emitPointerSpace();
     }
-
+    
     void emitJE() {
         machineCode.push_back(JNE32_1);
         machineCode.push_back(JNE32_2);
+    }
+    
+    void emitPointerSpace() {
+        for (int i = 0; i < 4; ++i)
+            machineCode.push_back(0);
     }
 
     std::vector<uint8_t> takeMachineCode() {
