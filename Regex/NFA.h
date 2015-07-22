@@ -24,6 +24,7 @@ public:
     }
 
 private:
+    // My compiler doesn't have Optionals, so I'll use unique_ptr instead. (lol....)
     typedef std::pair<std::unique_ptr<char>, std::reference_wrapper<const NFANode>> Edge;
 
     class EdgesComparator {
@@ -49,10 +50,11 @@ class NFANodeCollectionComparator {
 public:
     bool operator() (const NFANodeCollection& nc1, const NFANodeCollection& nc2) const {
         // Compare lexicographically
-        NFANodeComparator comparator;
         for (auto i1(nc1.begin()), i2(nc2.begin()); i1 != nc1.end() && i2 != nc2.end(); ++i1, ++i2) {
-            if (comparator(*i1, *i2))
+            if (&i1->get() < &i2->get())
                 return true;
+            if (&i1->get() > &i2->get())
+                return false;
         }
         return nc1.size() < nc2.size();
     }

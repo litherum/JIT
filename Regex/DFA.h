@@ -21,7 +21,7 @@ public:
     }
     
     const DFANode* follow(char c) const {
-        auto iter = edges.find(c);
+        auto iter(edges.find(c));
         if (iter == edges.end())
             return nullptr;
         return &iter->second.get();
@@ -30,7 +30,7 @@ public:
     template<typename T>
     void iterateEdges(T callback) const {
         for (const auto& iter : edges)
-            callback(iter.first, iter.second.get());
+            callback(iter.first, iter.second);
     }
     
 private:

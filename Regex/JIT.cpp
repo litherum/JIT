@@ -38,7 +38,7 @@ public:
         emitPointerSpace();
         
         for (const DFANode& node : nodes) {
-            stateLocations.insert(std::make_pair(&node, machineCode.size()));
+            stateLocations.emplace(std::make_pair(std::reference_wrapper<const DFANode>(node), machineCode.size()));
             emitNextCharCall();
             machineCode.push_back(CMP_AL);
             machineCode.push_back(0);
@@ -76,14 +76,14 @@ public:
     }
     
     void linkMachineCode(const DFANode& startNode, const DFANodeReferenceCollection& endNodes) {
-        assert(stateLocations.find(&startNode) != stateLocations.end());
+        assert(stateLocations.find(startNode) != stateLocations.end());
         for (const DFANode& node : endNodes)
-            assert(stateLocations.find(&node) != stateLocations.end());
+            assert(stateLocations.find(node) != stateLocations.end());
         
-        overwrite32WithDelta(startAddressLocation, stateLocations[&startNode]);
+        overwrite32WithDelta(startAddressLocation, stateLocations[startNode]);
         
         for (const auto& nodeAddressLocation : nodeAddressLocations) {
-            auto iter = stateLocations.find(&nodeAddressLocation.second.get());
+            auto iter(stateLocations.find(nodeAddressLocation.second));
             assert(iter != stateLocations.end());
             overwrite32WithDelta(nodeAddressLocation.first, iter->second);
         }
@@ -139,7 +139,7 @@ public:
     }
     
     void emitPointerSpace() {
-        for (int i = 0; i < 4; ++i)
+        for (int i(0); i < 4; ++i)
             machineCode.push_back(0);
     }
     
@@ -177,7 +177,7 @@ private:
     std::set<size_t> failAddressLocations;
     std::set<size_t> epilogueAddressLocations;
     std::vector<std::pair<size_t, std::reference_wrapper<const DFANode>>> nodeAddressLocations;
-    std::map<const DFANode*, size_t> stateLocations;
+    std::map<std::reference_wrapper<const DFANode>, std::size_t, DFANodeComparator> stateLocations;
 };
 
 class JIT::Tracker {
@@ -186,7 +186,7 @@ public:
     }
     
     bool run() {
-        bool (JIT::Tracker::*callMe)() = nullptr;
+        bool (JIT::Tracker::*callMe)()(nullptr);
         // AFAICT, we have to drop down to asm to cast a void* to a pointer to member function
         // Note that a pointer to a member function is actually a tuple.
         asm("movq %1, %0" : "=m" (callMe) : "r" (machineCode));
@@ -209,7 +209,7 @@ private:
 
 JIT::JIT(const DFANodeCollection& nodes, const DFANode& startNode, const DFANodeReferenceCollection& endNodes) {
     CodeGenerator codeGenerator(nodes, startNode, endNodes);
-    std::vector<uint8_t> code = codeGenerator.takeMachineCode();
+    std::vector<uint8_t> code(codeGenerator.takeMachineCode());
     machineCode.reset(mmap(NULL, code.size(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0));
     if (machineCode.get() == MAP_FAILED)
         perror("Map failed");
@@ -218,8 +218,8 @@ JIT::JIT(const DFANodeCollection& nodes, const DFANode& startNode, const DFANode
     machineCode.get_deleter().setLength(code.size());
     
     for (size_t i : codeGenerator.takeNextCharAddressLocations()) {
-        uint8_t* location = reinterpret_cast<uint8_t*>(machineCode.get()) + i;
-        uint8_t* pc = location + 4;
+        uint8_t* location(reinterpret_cast<uint8_t*>(machineCode.get()) + i);
+        uint8_t* pc(location + 4);
         uint8_t* nextCharFunction;
         // AFAICT, we have to drop down to asm to cast a function pointer to a uint8_t*
         asm("movq %1, %0" : "=r" (nextCharFunction) : "r" (&Tracker::nextChar));
@@ -233,7 +233,7 @@ bool JIT::run(const std::string& s) const {
 }
 
 void JIT::Unmapper::operator()(void* ptr) const {
-    int ret = munmap(ptr, length);
+    int ret(munmap(ptr, length));
     if (ret != 0)
         perror("Unmap failed");
     assert(ret == 0);

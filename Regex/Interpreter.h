@@ -18,9 +18,9 @@ public:
     }
     
     virtual bool run(const std::string& s) const override {
-        const DFANode* state = &startNode;
+        const DFANode* state(&startNode);
         for (char c : s) {
-            if (const DFANode* n = state->follow(c))
+            if (const DFANode* n(state->follow(c)))
                 state = n;
             else
                 return false;
