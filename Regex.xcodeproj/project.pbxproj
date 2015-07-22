@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C228389B1B5101E1007E9FC7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C228389A1B5101E1007E9FC7 /* main.cpp */; };
+		C261FDE21B5F51B100CBC1BF /* DFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE01B5F51B100CBC1BF /* DFA.cpp */; };
+		C261FDE91B5F531500CBC1BF /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE71B5F531500CBC1BF /* JIT.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,13 @@
 /* Begin PBXFileReference section */
 		C22838971B5101E1007E9FC7 /* Regex */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Regex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C228389A1B5101E1007E9FC7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		C261FDDE1B5F4F8D00CBC1BF /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
+		C261FDE01B5F51B100CBC1BF /* DFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFA.cpp; sourceTree = "<group>"; };
+		C261FDE11B5F51B100CBC1BF /* DFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFA.h; sourceTree = "<group>"; };
+		C261FDE31B5F522700CBC1BF /* Machine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Machine.h; sourceTree = "<group>"; };
+		C261FDE51B5F525000CBC1BF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
+		C261FDE71B5F531500CBC1BF /* JIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JIT.cpp; sourceTree = "<group>"; };
+		C261FDE81B5F531500CBC1BF /* JIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIT.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +67,13 @@
 			isa = PBXGroup;
 			children = (
 				C228389A1B5101E1007E9FC7 /* main.cpp */,
+				C261FDDE1B5F4F8D00CBC1BF /* NFA.h */,
+				C261FDE01B5F51B100CBC1BF /* DFA.cpp */,
+				C261FDE11B5F51B100CBC1BF /* DFA.h */,
+				C261FDE31B5F522700CBC1BF /* Machine.h */,
+				C261FDE51B5F525000CBC1BF /* Interpreter.h */,
+				C261FDE71B5F531500CBC1BF /* JIT.cpp */,
+				C261FDE81B5F531500CBC1BF /* JIT.h */,
 			);
 			path = Regex;
 			sourceTree = "<group>";
@@ -118,7 +134,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C261FDE21B5F51B100CBC1BF /* DFA.cpp in Sources */,
 				C228389B1B5101E1007E9FC7 /* main.cpp in Sources */,
+				C261FDE91B5F531500CBC1BF /* JIT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +223,7 @@
 		C228389F1B5101E1007E9FC7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -212,6 +231,7 @@
 		C22838A01B5101E1007E9FC7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -235,6 +255,7 @@
 				C22838A01B5101E1007E9FC7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
