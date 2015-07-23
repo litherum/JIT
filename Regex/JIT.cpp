@@ -14,7 +14,7 @@
 #include "JIT.h"
 
 #if !defined(__x86_64__) || !defined(__APPLE__)
-#error Requires x86_64!
+#error Requires x86_64 on OS X!
 #endif
 
 class CodeGenerator {
@@ -32,10 +32,6 @@ public:
         machineCode.push_back(0xe5); // stack pointer into base pointer
         
         machineCode.push_back(PUSH_RDI); // "this" ptr
-        
-        machineCode.push_back(JMP);
-        startAddressLocation = machineCode.size();
-        emitPointerSpace();
         
         dfa.iterateNodes([&](DFANode node) {
             stateLocations[node] = machineCode.size();
@@ -76,8 +72,6 @@ public:
     }
     
     void linkMachineCode(const DFA& dfa) {
-        overwrite32WithDelta(startAddressLocation, stateLocations[0]);
-        
         for (const auto& nodeAddressLocation : nodeAddressLocations)
             overwrite32WithDelta(nodeAddressLocation.first, stateLocations[nodeAddressLocation.second]);
         
@@ -159,8 +153,7 @@ private:
     const uint8_t MOV_RR = 0x89;
     const uint8_t MOV_MR = 0x8b;
     const uint8_t POP_RDI = 0x5f;
-    
-    size_t startAddressLocation;
+
     size_t successLocation;
     size_t failLocation;
     size_t epilogueLocation;
