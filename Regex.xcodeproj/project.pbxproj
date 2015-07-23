@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		C228389B1B5101E1007E9FC7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C228389A1B5101E1007E9FC7 /* main.cpp */; };
-		C25359F11B60C9B300E92EF0 /* AST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C25359EF1B60C9B300E92EF0 /* AST.cpp */; };
 		C261FDE21B5F51B100CBC1BF /* DFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE01B5F51B100CBC1BF /* DFA.cpp */; };
 		C261FDE91B5F531500CBC1BF /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE71B5F531500CBC1BF /* JIT.cpp */; };
 /* End PBXBuildFile section */
@@ -28,7 +27,6 @@
 /* Begin PBXFileReference section */
 		C22838971B5101E1007E9FC7 /* Regex */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Regex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C228389A1B5101E1007E9FC7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		C25359EF1B60C9B300E92EF0 /* AST.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AST.cpp; sourceTree = "<group>"; };
 		C25359F01B60C9B300E92EF0 /* AST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AST.h; sourceTree = "<group>"; };
 		C261FDDE1B5F4F8D00CBC1BF /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		C261FDE01B5F51B100CBC1BF /* DFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFA.cpp; sourceTree = "<group>"; };
@@ -77,7 +75,6 @@
 				C261FDE51B5F525000CBC1BF /* Interpreter.h */,
 				C261FDE71B5F531500CBC1BF /* JIT.cpp */,
 				C261FDE81B5F531500CBC1BF /* JIT.h */,
-				C25359EF1B60C9B300E92EF0 /* AST.cpp */,
 				C25359F01B60C9B300E92EF0 /* AST.h */,
 			);
 			path = Regex;
@@ -139,7 +136,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C25359F11B60C9B300E92EF0 /* AST.cpp in Sources */,
 				C261FDE21B5F51B100CBC1BF /* DFA.cpp in Sources */,
 				C228389B1B5101E1007E9FC7 /* main.cpp in Sources */,
 				C261FDE91B5F531500CBC1BF /* JIT.cpp in Sources */,
