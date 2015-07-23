@@ -78,4 +78,10 @@ private:
     char c;
 };
 
+class Epsilon : public Literal {
+public:
+    Epsilon(): Literal(0) {
+    }
+};
+
 #endif /* defined(__Regex__AST__) */
