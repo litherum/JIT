@@ -9,8 +9,6 @@
 #ifndef __Regex__AST__
 #define __Regex__AST__
 
-#include <memory>
-
 #include "NFA.h"
 
 class ASTNode {
