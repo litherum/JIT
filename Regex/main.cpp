@@ -19,25 +19,26 @@ static std::unique_ptr<Machine> compile(const DFA& dfa) {
 }
 
 int main(int argc, const char * argv[]) {
-    // 01+10
-    NFANode nodes[5];
-    nodes[0].addEdge('0', nodes[1]);
-    nodes[1].addEdge('1', nodes[2]);
-    nodes[2].addEdge(0, nodes[1]);
-    nodes[2].addEdge('1', nodes[3]);
-    nodes[3].addEdge('0', nodes[4]);
+    // 01*1(A|B)
+    NFA a('0');
+    NFA b('1');
+    b.star();
+    a.concatenate(std::move(b));
+    a.concatenate(NFA('1'));
+    NFA c('A');
+    c.alternate(NFA('B'));
+    a.concatenate(std::move(c));
 
-    std::cout << "Nodes: ";
-    for (const NFANode& node : nodes)
-        std::cout << &node << " ";
-    std::cout << std::endl;
-
-    std::unique_ptr<Machine> m(compile(DFA(nodes[0], nodes[4])));
-    std::cout << m->run("0110") << std::endl;
-    std::cout << m->run("01110") << std::endl;
-    std::cout << m->run("1") << std::endl;
-    std::cout << m->run("010") << std::endl;
-    std::cout << m->run("01101") << std::endl;
-    std::cout << m->run("01111") << std::endl;
+    std::unique_ptr<Machine> m(compile(DFA(a)));
+    assert(m->run("0110") == false);
+    assert(m->run("011A") == true);
+    assert(m->run("011B") == true);
+    assert(m->run("011AB") == false);
+    assert(m->run("0111A") == true);
+    assert(m->run("1") == false);
+    assert(m->run("01B") == true);
+    assert(m->run("00") == false);
+    assert(m->run("01101") == false);
+    assert(m->run("01111") == false);
     return 0;
 }

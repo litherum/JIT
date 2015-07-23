@@ -18,7 +18,7 @@
 #include <unordered_set>
 #include <vector>
 
-class NFANode;
+class NFA;
 
 typedef std::size_t DFANode;
 
@@ -26,7 +26,7 @@ class DFA {
 public:
     static const DFANode invalidNode;
 
-    DFA(const NFANode& startNode, const NFANode& endNode);
+    DFA(const NFA&);
 
     void addEdge(DFANode source, char c, DFANode destination) {
         assert(source < incidence.size());

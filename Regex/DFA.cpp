@@ -35,7 +35,10 @@ static NFANodeCollection epsilonClosure(const NFANode& node) {
     return result;
 }
 
-DFA::DFA(const NFANode& startNode, const NFANode& endNode) {
+DFA::DFA(const NFA& nfa) {
+    const NFANode& startNode(nfa.start());
+    const NFANode& endNode(nfa.end());
+
     std::unordered_set<DFANode> completed;
     std::map<NFANodeCollection, DFANode, NFANodeCollectionComparator> map;
     std::queue<NFANodeCollection> workQueue;
