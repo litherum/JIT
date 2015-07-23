@@ -9,65 +9,65 @@
 #ifndef __Regex__DFA__
 #define __Regex__DFA__
 
+#include <cassert>
+#include <limits>
 #include <map>
 #include <memory>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
-class DFANode {
+class NFANode;
+
+typedef std::size_t DFANode;
+
+class DFA {
 public:
-    void addEdge(char c, DFANode& n) {
-        edges.emplace(std::make_pair(c, std::reference_wrapper<DFANode>(n)));
+    static const DFANode invalidNode;
+
+    DFA(const NFANode& startNode, const NFANode& endNode);
+
+    void addEdge(DFANode source, char c, DFANode destination) {
+        assert(source < incidence.size());
+        incidence[source].insert(std::make_pair(c, destination));
     }
-    
-    const DFANode* follow(char c) const {
-        auto iter(edges.find(c));
-        if (iter == edges.end())
-            return nullptr;
-        return &iter->second.get();
+
+    DFANode follow(DFANode source, char c) const {
+        assert(source < incidence.size());
+        const auto& m(incidence[source]);
+        const auto& iter(m.find(c));
+        if (iter == m.end())
+            return invalidNode;
+        return iter->second;
+    }
+
+    std::size_t size() const {
+        return incidence.size();
+    }
+
+    bool isEndNode(DFANode node) const {
+        return endNodes.find(node) != endNodes.end();
     }
     
     template<typename T>
-    void iterateEdges(T callback) const {
-        for (const auto& iter : edges)
-            callback(iter.first, iter.second);
+    void iterateNodes(T callback) const {
+        for (DFANode i(0); i < incidence.size(); ++i)
+            callback(i);
     }
     
-private:
-    std::map<char, std::reference_wrapper<const DFANode>> edges;
-};
-
-class DFANodeComparator {
-public:
-    bool operator() (const DFANode& n1, const DFANode& n2) const {
-        return &n1 < &n2;
-    }
-};
-
-typedef std::set<std::reference_wrapper<const DFANode>, DFANodeComparator> DFANodeReferenceCollection;
-typedef std::vector<DFANode> DFANodeCollection;
-
-class NFANode;
-class DFA {
-public:
-    DFA(const NFANode& startNode, const NFANode& endNode);
-
-    const DFANodeCollection& getNodes() const {
-        return nodes;
-    }
-
-    const DFANode& getStartNode() const {
-        return *startNode;
-    }
-
-    const DFANodeReferenceCollection& getEndNodes() const {
-        return endNodes;
+    template<typename T>
+    void iterateEdges(DFANode source, T callback) const {
+        assert(source < incidence.size());
+        for (const auto& iter : incidence[source])
+            callback(iter.first, iter.second);
     }
 
 private:
-    DFANodeCollection nodes;
-    const DFANode* startNode;
-    DFANodeReferenceCollection endNodes;
+    // Could make the map into a std::array because chars are so small, but this is more general.
+    std::vector<std::unordered_map<char, DFANode>> incidence;
+    // Start at index 0
+    std::unordered_set<std::size_t> endNodes;
 };
 
 #endif /* defined(__Regex__DFA__) */

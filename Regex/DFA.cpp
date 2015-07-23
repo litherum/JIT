@@ -15,6 +15,8 @@
 #include "DFA.h"
 #include "NFA.h"
 
+const DFANode DFA::invalidNode = std::numeric_limits<DFANode>::max();
+
 static NFANodeCollection epsilonClosure(const NFANode& node) {
     NFANodeCollection result;
     std::queue<std::reference_wrapper<const NFANode>> workQueue;
@@ -25,47 +27,37 @@ static NFANodeCollection epsilonClosure(const NFANode& node) {
         if (result.find(current) != result.end())
             continue;
         result.insert(current);
-        current.iterateEdges([&](const std::unique_ptr<char>& c, const NFANode& neighbor) {
-            if (c == nullptr)
+        current.iterateEdges([&](char c, const NFANode& neighbor) {
+            if (c == 0)
                 workQueue.push(neighbor);
         });
     }
     return result;
 }
 
-static void printNFANodeCollection(const NFANodeCollection& collection) {
-    for (const NFANode& node : collection)
-        std::cout << &node << " ";
-    std::cout << std::endl;
-}
-
-DFA::DFA(const NFANode& startNode, const NFANode& endNode): startNode(nullptr) {
-    const std::size_t initialIndex(std::numeric_limits<std::size_t>::max());
-    std::set<NFANodeCollection, NFANodeCollectionComparator> completed;
-    std::map<NFANodeCollection, std::size_t, NFANodeCollectionComparator> map;
-    std::map<std::size_t, std::map<char, std::size_t>> incidence;
-    std::queue<const NFANodeCollection> workQueue;
+DFA::DFA(const NFANode& startNode, const NFANode& endNode) {
+    std::unordered_set<DFANode> completed;
+    std::map<NFANodeCollection, DFANode, NFANodeCollectionComparator> map;
+    std::queue<NFANodeCollection> workQueue;
     NFANodeCollection closure(epsilonClosure(startNode));
-    nodes.emplace_back();
-    incidence.emplace(std::make_pair(std::size_t(0), std::map<char, std::size_t>()));
+    incidence.emplace_back(std::unordered_map<char, DFANode>());
     map.emplace(std::make_pair(closure, 0));
     workQueue.emplace(std::move(closure));
     
     while (!workQueue.empty()) {
         const NFANodeCollection current(workQueue.front());
-        printNFANodeCollection(current);
         workQueue.pop();
         const auto& i(map.find(current));
         assert(i != map.end());
-        assert(i->second != initialIndex);
-        std::cout << " ==> " << i->second << std::endl;
-        std::size_t dfaNodeIndex(i->second);
+        assert(i->second != invalidNode);
+        DFANode node(i->second);
+
         // This is a Map / Reduce operation
-        std::map<char, NFANodeCollection> outgoingEdges;
+        std::unordered_map<char, NFANodeCollection> outgoingEdges;
         for (const NFANode& nfaNode : current) {
-            nfaNode.iterateEdges([&](const std::unique_ptr<char>& c, const NFANode& neighbor) {
-                if (c != nullptr) // epsilon
-                    outgoingEdges.insert(std::make_pair(*c, NFANodeCollection())).first->second.insert(neighbor);
+            nfaNode.iterateEdges([&](char c, const NFANode& neighbor) {
+                if (c != 0) // epsilon
+                    outgoingEdges.insert(std::make_pair(c, NFANodeCollection())).first->second.insert(neighbor);
             });
         }
         for (const auto& outgoingEdge : outgoingEdges) {
@@ -74,30 +66,22 @@ DFA::DFA(const NFANode& startNode, const NFANode& endNode): startNode(nullptr) {
                 const NFANodeCollection& closure(epsilonClosure(node));
                 neighbor.insert(closure.cbegin(), closure.cend());
             }
-            auto p(map.insert(std::make_pair(neighbor, initialIndex)));
+            auto p(map.insert(std::make_pair(neighbor, invalidNode)));
             if (p.second) {
-                nodes.emplace_back();
-                incidence.emplace(std::make_pair(nodes.size() - 1, std::map<char, std::size_t>()));
-                p.first->second = nodes.size() - 1;
+                incidence.emplace_back(std::unordered_map<char, DFANode>());
+                p.first->second = incidence.size() - 1;
             }
-            assert(p.first->second != initialIndex);
-            incidence[dfaNodeIndex].emplace(std::make_pair(outgoingEdge.first, p.first->second));
-            //nodes[dfaNodeIndex].addEdge(outgoingEdge.first, nodes[p.first->second]);
-            if (completed.find(neighbor) == completed.end())
+            DFANode dfaNeighbor = p.first->second;
+            assert(dfaNeighbor != invalidNode);
+            incidence[node].emplace(std::make_pair(outgoingEdge.first, dfaNeighbor));
+            if (completed.find(dfaNeighbor) == completed.end())
                 workQueue.push(neighbor);
-            completed.emplace(std::move(neighbor));
+            completed.emplace(dfaNeighbor);
         }
     }
 
-    for (const auto& i : incidence) {
-        for (const auto& j : i.second) {
-            nodes[i.first].addEdge(j.first, nodes[j.second]);
-        }
-    }
-    
-    this->startNode = &nodes[0];
     for (const auto& n : map) {
         if (n.first.find(endNode) != n.first.end())
-            endNodes.insert(nodes[n.second]);
+            endNodes.insert(n.second);
     }
 }

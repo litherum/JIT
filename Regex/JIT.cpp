@@ -19,12 +19,12 @@
 
 class CodeGenerator {
 public:
-    CodeGenerator(const DFANodeCollection& nodes, const DFANode& startNode, const DFANodeReferenceCollection& endNodes) {
-        compileMachineCode(nodes, startNode, endNodes);
-        linkMachineCode(startNode, endNodes);
+    CodeGenerator(const DFA& dfa): stateLocations(dfa.size()) {
+        compileMachineCode(dfa);
+        linkMachineCode(dfa);
     }
     
-    void compileMachineCode(const DFANodeCollection& nodes, const DFANode& startNode, const DFANodeReferenceCollection& endNodes) {
+    void compileMachineCode(const DFA& dfa) {
         machineCode.push_back(PUSH_RBP);
         
         machineCode.push_back(REX_000);
@@ -37,24 +37,24 @@ public:
         startAddressLocation = machineCode.size();
         emitPointerSpace();
         
-        for (const DFANode& node : nodes) {
-            stateLocations.emplace(std::make_pair(std::reference_wrapper<const DFANode>(node), machineCode.size()));
+        dfa.iterateNodes([&](DFANode node) {
+            stateLocations[node] = machineCode.size();
             emitNextCharCall();
             machineCode.push_back(CMP_AL);
             machineCode.push_back(0);
-            if (endNodes.find(node) != endNodes.end())
+            if (dfa.isEndNode(node))
                 emitJESuccess();
             else
                 emitJEFail();
-            node.iterateEdges([&](char c, const DFANode& d) {
+            dfa.iterateEdges(node, [&](char c, DFANode destination) {
                 machineCode.push_back(CMP_AL);
                 machineCode.push_back(c);
                 emitJE();
-                nodeAddressLocations.emplace_back(std::make_pair(machineCode.size(), std::reference_wrapper<const DFANode>(d)));
+                nodeAddressLocations.emplace_back(std::make_pair(machineCode.size(), destination));
                 emitPointerSpace();
             });
             emitJMPFail();
-        }
+        });
         
         successLocation = machineCode.size();
         machineCode.push_back(MOV_AL);
@@ -75,18 +75,11 @@ public:
         *reinterpret_cast<uint32_t*>(machineCode.data() + location) = static_cast<uint32_t>(destination - (location + 4));
     }
     
-    void linkMachineCode(const DFANode& startNode, const DFANodeReferenceCollection& endNodes) {
-        assert(stateLocations.find(startNode) != stateLocations.end());
-        for (const DFANode& node : endNodes)
-            assert(stateLocations.find(node) != stateLocations.end());
+    void linkMachineCode(const DFA& dfa) {
+        overwrite32WithDelta(startAddressLocation, stateLocations[0]);
         
-        overwrite32WithDelta(startAddressLocation, stateLocations[startNode]);
-        
-        for (const auto& nodeAddressLocation : nodeAddressLocations) {
-            auto iter(stateLocations.find(nodeAddressLocation.second));
-            assert(iter != stateLocations.end());
-            overwrite32WithDelta(nodeAddressLocation.first, iter->second);
-        }
+        for (const auto& nodeAddressLocation : nodeAddressLocations)
+            overwrite32WithDelta(nodeAddressLocation.first, stateLocations[nodeAddressLocation.second]);
         
         for (size_t location : successAddressLocations)
             overwrite32WithDelta(location, successLocation);
@@ -176,8 +169,8 @@ private:
     std::set<size_t> successAddressLocations;
     std::set<size_t> failAddressLocations;
     std::set<size_t> epilogueAddressLocations;
-    std::vector<std::pair<size_t, std::reference_wrapper<const DFANode>>> nodeAddressLocations;
-    std::map<std::reference_wrapper<const DFANode>, std::size_t, DFANodeComparator> stateLocations;
+    std::vector<std::pair<size_t, DFANode>> nodeAddressLocations;
+    std::vector<std::size_t> stateLocations;
 };
 
 class JIT::Tracker {
@@ -207,8 +200,8 @@ private:
     void* machineCode;
 };
 
-JIT::JIT(const DFANodeCollection& nodes, const DFANode& startNode, const DFANodeReferenceCollection& endNodes) {
-    CodeGenerator codeGenerator(nodes, startNode, endNodes);
+JIT::JIT(const DFA& dfa) {
+    CodeGenerator codeGenerator(dfa);
     std::vector<uint8_t> code(codeGenerator.takeMachineCode());
     machineCode.reset(mmap(NULL, code.size(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0));
     if (machineCode.get() == MAP_FAILED)

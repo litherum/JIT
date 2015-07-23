@@ -16,7 +16,7 @@
 
 class JIT: public Machine {
 public:
-    JIT(const DFANodeCollection& nodes, const DFANode& startNode, const DFANodeReferenceCollection& endNodes);
+    JIT(const DFA& dfa);
     
     virtual bool run(const std::string& s) const override;
     

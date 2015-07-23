@@ -14,23 +14,21 @@
 
 class Interpreter: public Machine {
 public:
-    Interpreter(const DFANode& startNode, const DFANode& endNode): startNode(startNode), endNode(endNode) {
+    Interpreter(const DFA& dfa): dfa(dfa) {
     }
     
     virtual bool run(const std::string& s) const override {
-        const DFANode* state(&startNode);
+        DFANode state(0);
         for (char c : s) {
-            if (const DFANode* n(state->follow(c)))
-                state = n;
-            else
+            state = dfa.follow(state, c);
+            if (state == DFA::invalidNode)
                 return false;
         }
-        return state == &endNode;
+        return dfa.isEndNode(state);
     }
     
 private:
-    const DFANode& startNode;
-    const DFANode& endNode;
+    const DFA& dfa;
 };
 
 #endif /* defined(__Regex__Interpreter__) */

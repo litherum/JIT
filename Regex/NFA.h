@@ -13,8 +13,8 @@
 
 class NFANode {
 public:
-    void addEdge(std::unique_ptr<char>&& c, NFANode& n) {
-        edges.emplace(std::make_pair(std::move(c), std::reference_wrapper<NFANode>(n)));
+    void addEdge(char c, NFANode& n) {
+        edges.emplace(std::make_pair(c, std::reference_wrapper<NFANode>(n)));
     }
 
     template<typename T>
@@ -24,8 +24,7 @@ public:
     }
 
 private:
-    // My compiler doesn't have Optionals, so I'll use unique_ptr instead. (lol....)
-    typedef std::pair<std::unique_ptr<char>, std::reference_wrapper<const NFANode>> Edge;
+    typedef std::pair<char, std::reference_wrapper<const NFANode>> Edge;
 
     class EdgesComparator {
     public:

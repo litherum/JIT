@@ -15,17 +15,17 @@
 #include "NFA.h"
 
 static std::unique_ptr<Machine> compile(const DFA& dfa) {
-    return std::unique_ptr<Machine>(new JIT(dfa.getNodes(), dfa.getStartNode(), dfa.getEndNodes()));
+    return std::unique_ptr<Machine>(new JIT(dfa));
 }
 
 int main(int argc, const char * argv[]) {
     // 01+10
     NFANode nodes[5];
-    nodes[0].addEdge(std::unique_ptr<char>(new char('0')), nodes[1]);
-    nodes[1].addEdge(std::unique_ptr<char>(new char('1')), nodes[2]);
-    nodes[2].addEdge(nullptr, nodes[1]);
-    nodes[2].addEdge(std::unique_ptr<char>(new char('1')), nodes[3]);
-    nodes[3].addEdge(std::unique_ptr<char>(new char('0')), nodes[4]);
+    nodes[0].addEdge('0', nodes[1]);
+    nodes[1].addEdge('1', nodes[2]);
+    nodes[2].addEdge(0, nodes[1]);
+    nodes[2].addEdge('1', nodes[3]);
+    nodes[3].addEdge('0', nodes[4]);
 
     std::cout << "Nodes: ";
     for (const NFANode& node : nodes)
