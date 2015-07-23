@@ -10,6 +10,7 @@
 #define __Regex__NFA__
 
 #include <set>
+#include <vector>
 
 class NFANode {
 public:

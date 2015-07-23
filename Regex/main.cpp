@@ -10,9 +10,9 @@
 #include <map>
 #include <queue>
 
+#include "AST.h"
 #include "DFA.h"
 #include "JIT.h"
-#include "NFA.h"
 
 static std::unique_ptr<Machine> compile(const DFA& dfa) {
     return std::unique_ptr<Machine>(new JIT(dfa));
@@ -20,16 +20,10 @@ static std::unique_ptr<Machine> compile(const DFA& dfa) {
 
 int main(int argc, const char * argv[]) {
     // 01*1(A|B)
-    NFA a('0');
-    NFA b('1');
-    b.star();
-    a.concatenate(std::move(b));
-    a.concatenate(NFA('1'));
-    NFA c('A');
-    c.alternate(NFA('B'));
-    a.concatenate(std::move(c));
 
-    std::unique_ptr<Machine> m(compile(DFA(a)));
+    std::unique_ptr<Machine> m(compile(DFA(
+        Concatenation(Literal('0'), Concatenation(Star(Literal('1')), Concatenation(Literal('1'), Alternation(Literal('A'), Literal('B'))))).resolve()
+    )));
     assert(m->run("0110") == false);
     assert(m->run("011A") == true);
     assert(m->run("011B") == true);
