@@ -11,6 +11,8 @@
 
 #include "NFA.h"
 
+// FIXME: These classes are all unnecessary. The parser can just build the NFAs directly.
+
 class ASTNode {
 public:
     virtual NFA resolve() const = 0;
