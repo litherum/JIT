@@ -6,12 +6,9 @@
 //  Copyright © 2015 Litherum. All rights reserved.
 //
 
-#include <iostream>
-#include <map>
-#include <queue>
-
 #include "DFA.h"
 #include "JIT.h"
+#include "Interpreter.h"
 #include "Parser.h"
 
 static std::unique_ptr<Machine> compile(const DFA& dfa) {
@@ -19,13 +16,13 @@ static std::unique_ptr<Machine> compile(const DFA& dfa) {
 }
 
 int main(int argc, const char * argv[]) {
-    std::string s("01*1(A|B)");
     RegexParser parser("01*1(A|B)");
     if (!parser.parse()) {
         assert(false);
     }
 
-    std::unique_ptr<Machine> m(compile(DFA(parser.takeNFA())));
+    DFA dfa(parser.takeNFA());
+    std::unique_ptr<Machine> m(compile(dfa));
     assert(m->run("0110") == false);
     assert(m->run("011A") == true);
     assert(m->run("011B") == true);
