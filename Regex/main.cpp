@@ -14,16 +14,22 @@
 #include "DFA.h"
 #include "JIT.h"
 
+extern "C" {
+int yyparse();
+char *thestring;
+}
+
+extern std::vector<std::unique_ptr<ASTNode>> nodeStorage;
+
 static std::unique_ptr<Machine> compile(const DFA& dfa) {
     return std::unique_ptr<Machine>(new JIT(dfa));
 }
 
 int main(int argc, const char * argv[]) {
-    // 01*1(A|B)
+    thestring = "01*1(A|B)";
+    yyparse();
 
-    std::unique_ptr<Machine> m(compile(DFA(
-        Concatenation(Literal('0'), Concatenation(Star(Literal('1')), Concatenation(Literal('1'), Alternation(Literal('A'), Literal('B'))))).resolve()
-    )));
+    std::unique_ptr<Machine> m(compile(DFA(nodeStorage[nodeStorage.size() - 1]->resolve())));
     assert(m->run("0110") == false);
     assert(m->run("011A") == true);
     assert(m->run("011B") == true);
