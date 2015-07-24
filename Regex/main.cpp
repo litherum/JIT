@@ -10,26 +10,22 @@
 #include <map>
 #include <queue>
 
-#include "AST.h"
 #include "DFA.h"
 #include "JIT.h"
-
-extern "C" {
-int yyparse();
-char *thestring;
-}
-
-extern std::vector<std::unique_ptr<ASTNode>> nodeStorage;
+#include "Parser.h"
 
 static std::unique_ptr<Machine> compile(const DFA& dfa) {
     return std::unique_ptr<Machine>(new JIT(dfa));
 }
 
 int main(int argc, const char * argv[]) {
-    thestring = "01*1(A|B)";
-    yyparse();
+    std::string s("01*1(A|B)");
+    RegexParser parser("01*1(A|B)");
+    if (!parser.parse()) {
+        assert(false);
+    }
 
-    std::unique_ptr<Machine> m(compile(DFA(nodeStorage[nodeStorage.size() - 1]->resolve())));
+    std::unique_ptr<Machine> m(compile(DFA(parser.takeNFA())));
     assert(m->run("0110") == false);
     assert(m->run("011A") == true);
     assert(m->run("011B") == true);

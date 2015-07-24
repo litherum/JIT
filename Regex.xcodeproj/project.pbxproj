@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C228389B1B5101E1007E9FC7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C228389A1B5101E1007E9FC7 /* main.cpp */; };
-		C2330B031B62227200A3003A /* test.y in Sources */ = {isa = PBXBuildFile; fileRef = C2330B021B62227200A3003A /* test.y */; };
-		C2330B061B62245A00A3003A /* ASTParserHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2330B041B62245A00A3003A /* ASTParserHelpers.cpp */; };
+		C24FFBF61B62D7F100586733 /* ParserGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */; };
 		C261FDE21B5F51B100CBC1BF /* DFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE01B5F51B100CBC1BF /* DFA.cpp */; };
 		C261FDE91B5F531500CBC1BF /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE71B5F531500CBC1BF /* JIT.cpp */; };
 /* End PBXBuildFile section */
@@ -29,10 +28,8 @@
 /* Begin PBXFileReference section */
 		C22838971B5101E1007E9FC7 /* Regex */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Regex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C228389A1B5101E1007E9FC7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		C2330B021B62227200A3003A /* test.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = test.y; sourceTree = "<group>"; };
-		C2330B041B62245A00A3003A /* ASTParserHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTParserHelpers.cpp; sourceTree = "<group>"; };
-		C2330B051B62245A00A3003A /* ASTParserHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTParserHelpers.h; sourceTree = "<group>"; };
-		C25359F01B60C9B300E92EF0 /* AST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AST.h; sourceTree = "<group>"; };
+		C2330B021B62227200A3003A /* ParserGrammar.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = ParserGrammar.y; sourceTree = "<group>"; };
+		C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserGrammar.cpp; sourceTree = "<group>"; };
 		C261FDDE1B5F4F8D00CBC1BF /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		C261FDE01B5F51B100CBC1BF /* DFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFA.cpp; sourceTree = "<group>"; };
 		C261FDE11B5F51B100CBC1BF /* DFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFA.h; sourceTree = "<group>"; };
@@ -40,6 +37,7 @@
 		C261FDE51B5F525000CBC1BF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
 		C261FDE71B5F531500CBC1BF /* JIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JIT.cpp; sourceTree = "<group>"; };
 		C261FDE81B5F531500CBC1BF /* JIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIT.h; sourceTree = "<group>"; };
+		C2EA47B11B62C530007FEB66 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,10 +78,9 @@
 				C261FDE51B5F525000CBC1BF /* Interpreter.h */,
 				C261FDE71B5F531500CBC1BF /* JIT.cpp */,
 				C261FDE81B5F531500CBC1BF /* JIT.h */,
-				C25359F01B60C9B300E92EF0 /* AST.h */,
-				C2330B021B62227200A3003A /* test.y */,
-				C2330B041B62245A00A3003A /* ASTParserHelpers.cpp */,
-				C2330B051B62245A00A3003A /* ASTParserHelpers.h */,
+				C2330B021B62227200A3003A /* ParserGrammar.y */,
+				C2EA47B11B62C530007FEB66 /* Parser.h */,
+				C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */,
 			);
 			path = Regex;
 			sourceTree = "<group>";
@@ -95,6 +92,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C228389E1B5101E1007E9FC7 /* Build configuration list for PBXNativeTarget "Regex" */;
 			buildPhases = (
+				C24FFBF41B62D5D100586733 /* ShellScript */,
 				C22838931B5101E1007E9FC7 /* Sources */,
 				C22838941B5101E1007E9FC7 /* Frameworks */,
 				C22838951B5101E1007E9FC7 /* CopyFiles */,
@@ -139,16 +137,31 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		C24FFBF41B62D5D100586733 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bison -d -b RegexParser -p regex Regex/ParserGrammar.y -o Regex/ParserGrammar.cpp";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		C22838931B5101E1007E9FC7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				C261FDE21B5F51B100CBC1BF /* DFA.cpp in Sources */,
-				C2330B031B62227200A3003A /* test.y in Sources */,
 				C228389B1B5101E1007E9FC7 /* main.cpp in Sources */,
 				C261FDE91B5F531500CBC1BF /* JIT.cpp in Sources */,
-				C2330B061B62245A00A3003A /* ASTParserHelpers.cpp in Sources */,
+				C24FFBF61B62D7F100586733 /* ParserGrammar.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
