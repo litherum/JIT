@@ -17,6 +17,8 @@
 #error Requires x86_64 on OS X!
 #endif
 
+namespace Regex {
+
 class CodeGenerator {
 public:
     CodeGenerator(const DFA& dfa): stateLocations(dfa.size()) {
@@ -225,4 +227,4 @@ void JIT::Unmapper::operator()(void* ptr) const {
     assert(ret == 0);
 }
 
-
+}

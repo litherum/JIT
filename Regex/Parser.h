@@ -11,20 +11,26 @@
 
 #include <cassert>
 #include <string>
+#include <unordered_set>
 
 #include "NFA.h"
 
 typedef std::size_t NFAHandle;
+typedef std::unordered_set<char> CSet;
+typedef std::size_t CSetHandle;
 #include "ParserGrammar.hpp"
 
-class RegexParser;
-extern int regexparse(RegexParser*);
+namespace Regex {
+class Parser;
+}
 
-class RegexParser {
+extern int regexparse(Regex::Parser*);
+
+namespace Regex {
+
+class Parser {
 public:
-
-    RegexParser(std::string string) : string(string), stringIndex(0), failed(false) {
-    }
+    Parser(std::string string);
 
     bool parse() {
         regexparse(this);
@@ -45,63 +51,32 @@ public:
         return string[stringIndex++];
     }
 
-    NFAHandle alternate(NFAHandle a, NFAHandle b) {
-        assert(a < nfaStorage.size() && b < nfaStorage.size());
-        nfaStorage[a].alternate(std::move(nfaStorage[b]));
-        return a;
-    }
-
-    NFAHandle star(NFAHandle a) {
-        assert(a < nfaStorage.size());
-        nfaStorage[a].star();
-        return a;
-    }
-
-    NFAHandle concatenate(NFAHandle a, NFAHandle b) {
-        assert(a < nfaStorage.size() && b < nfaStorage.size());
-        nfaStorage[a].concatenate(std::move(nfaStorage[b]));
-        return a;
-    }
-
-    NFAHandle literal(char c) {
-        nfaStorage.emplace_back(NFA(c));
-        return nfaStorage.size() - 1;
-    }
-
-    NFAHandle epsilon() {
-        nfaStorage.emplace_back(NFA(0));
-        return nfaStorage.size() - 1;
-    }
+    NFAHandle alternate(NFAHandle a, NFAHandle b);
+    NFAHandle star(NFAHandle a);
+    NFAHandle plus(NFAHandle a);
+    NFAHandle concatenate(NFAHandle a, NFAHandle b);
+    NFAHandle literal(char c);
+    NFAHandle epsilon();
+    CSetHandle crange(char c);
+    CSetHandle crange(char a, char b);
+    CSetHandle csetUnion(CSetHandle a, CSetHandle b);
+    NFAHandle cset(CSetHandle s);
+    NFAHandle ncset(CSetHandle s);
     
 private:
+
+    NFAHandle csetImpl(const CSet& ss);
+
     std::vector<NFA> nfaStorage;
+    std::vector<CSet> csetStorage;
     std::string string;
     std::size_t stringIndex;
     bool failed;
 };
 
-inline int regexlex(YYSTYPE *lvalp, RegexParser* parser)
-{
-    char c = parser->readCharacter();
-    if (c == '\\')
-        c = parser->readCharacter();
-    switch (c) {
-    case 0:
-        return 0;
-    case '|':
-    case '*':
-    case '(':
-    case ')':
-        return c;
-    default:
-        lvalp->c = c;
-        return CHARACTER;
-    }
 }
 
-inline void regexerror(RegexParser* parser, const char *s)
-{
-    parser->fail();
-}
+int regexlex(YYSTYPE *lvalp, Regex::Parser* parser);
+void regexerror(Regex::Parser* parser, const char *s);
 
 #endif /* defined(__Regex__Parser__) */

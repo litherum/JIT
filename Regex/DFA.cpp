@@ -15,6 +15,8 @@
 #include "DFA.h"
 #include "NFA.h"
 
+namespace Regex {
+
 const DFANode DFA::invalidNode = std::numeric_limits<DFANode>::max();
 
 static NFANodeCollection epsilonClosure(const NFANode& node) {
@@ -87,4 +89,6 @@ DFA::DFA(const NFA& nfa) {
         if (n.first.find(endNode) != n.first.end())
             endNodes.insert(n.second);
     }
+}
+
 }

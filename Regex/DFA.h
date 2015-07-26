@@ -18,6 +18,8 @@
 #include <unordered_set>
 #include <vector>
 
+namespace Regex {
+
 class NFA;
 
 typedef std::size_t DFANode;
@@ -69,5 +71,7 @@ private:
     // Start at index 0
     std::unordered_set<std::size_t> endNodes;
 };
+
+}
 
 #endif /* defined(__Regex__DFA__) */

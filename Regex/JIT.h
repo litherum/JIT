@@ -14,6 +14,8 @@
 #include "DFA.h"
 #include "Machine.h"
 
+namespace Regex {
+
 class JIT: public Machine {
 public:
     JIT(const DFA& dfa);
@@ -37,5 +39,7 @@ private:
     
     std::unique_ptr<void, Unmapper> machineCode;
 };
+
+}
 
 #endif /* defined(__Regex__JIT__) */

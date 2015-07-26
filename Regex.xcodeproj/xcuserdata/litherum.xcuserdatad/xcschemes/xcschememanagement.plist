@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>RegexTests.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -18,6 +23,16 @@
 			<true/>
 		</dict>
 		<key>C24FFBEE1B62D52900586733</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C285E6981B655C96008CC012</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C285E6A11B655C96008CC012</key>
 		<dict>
 			<key>primary</key>
 			<true/>

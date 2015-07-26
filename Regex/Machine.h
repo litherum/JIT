@@ -11,6 +11,8 @@
 
 #include <string>
 
+namespace Regex {
+
 class Machine {
 public:
     virtual ~Machine() {
@@ -18,5 +20,7 @@ public:
     
     virtual bool run(const std::string& s) const = 0;
 };
+
+}
 
 #endif
