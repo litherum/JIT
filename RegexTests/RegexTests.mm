@@ -16,7 +16,7 @@
 
 @implementation RegexTests
 
-- (void)runMachinesWithRegex:(std::string)regex tests:(void(^)(Regex::Machine&))block {
+- (void)runMachinesWithRegex:(std::string)regex tests:(void(^)(const std::function<bool(const std::string&)>&))block {
     bool success;
     Regex::JIT jit(Regex::jit(regex, success));
     XCTAssertTrue(success);
@@ -46,163 +46,162 @@
 }
 
 - (void)testExample {
-    [self runMachinesWithRegex:"01*1(A|B)" tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run("0110"));
-        XCTAssertTrue(m.run("011A"));
-        XCTAssertTrue(m.run("011B"));
-        XCTAssertFalse(m.run("011AB"));
-        XCTAssertTrue(m.run("0111A"));
-        XCTAssertFalse(m.run("1"));
-        XCTAssertTrue(m.run("01B"));
-        XCTAssertFalse(m.run("00"));
-        XCTAssertFalse(m.run("01101"));
-        XCTAssertFalse(m.run("01111"));
+    [self runMachinesWithRegex:"01*1(A|B)" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m("0110"));
+        XCTAssertTrue(m("011A"));
+        XCTAssertTrue(m("011B"));
+        XCTAssertFalse(m("011AB"));
+        XCTAssertTrue(m("0111A"));
+        XCTAssertFalse(m("1"));
+        XCTAssertTrue(m("01B"));
+        XCTAssertFalse(m("00"));
+        XCTAssertFalse(m("01101"));
+        XCTAssertFalse(m("01111"));
     }];
 }
 
 - (void)testDot {
-    [self runMachinesWithRegex:"." tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("0"));
-        XCTAssertTrue(m.run("\["));
-        XCTAssertFalse(m.run("ab"));
+    [self runMachinesWithRegex:"." tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("0"));
+        XCTAssertTrue(m("\["));
+        XCTAssertFalse(m("ab"));
     }];
 }
 
 - (void)testAlternate {
-    [self runMachinesWithRegex:"a|b" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("b"));
-        XCTAssertFalse(m.run("q"));
-        XCTAssertFalse(m.run("ab"));
+    [self runMachinesWithRegex:"a|b" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("b"));
+        XCTAssertFalse(m("q"));
+        XCTAssertFalse(m("ab"));
     }];
 }
 
 - (void)testConcatenate {
-    [self runMachinesWithRegex:"ab" tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run("a"));
-        XCTAssertFalse(m.run("abc"));
-        XCTAssertFalse(m.run("ac"));
-        XCTAssertTrue(m.run("ab"));
+    [self runMachinesWithRegex:"ab" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m("a"));
+        XCTAssertFalse(m("abc"));
+        XCTAssertFalse(m("ac"));
+        XCTAssertTrue(m("ab"));
     }];
 }
 
 - (void)testStar {
-    [self runMachinesWithRegex:"a*" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run(""));
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("aa"));
-        XCTAssertTrue(m.run("aaaaaaaaaaaaaaaa"));
-        XCTAssertFalse(m.run("aaaaaaaaaaaaaaaab"));
-        XCTAssertFalse(m.run("aaaaaabaaaaaaaaaa"));
-        XCTAssertFalse(m.run("baaaaaaaaaaaaaaaa"));
+    [self runMachinesWithRegex:"a*" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m(""));
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("aa"));
+        XCTAssertTrue(m("aaaaaaaaaaaaaaaa"));
+        XCTAssertFalse(m("aaaaaaaaaaaaaaaab"));
+        XCTAssertFalse(m("aaaaaabaaaaaaaaaa"));
+        XCTAssertFalse(m("baaaaaaaaaaaaaaaa"));
     }];
 }
 
 - (void)testPlus {
-    [self runMachinesWithRegex:"a+" tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run(""));
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("aa"));
-        XCTAssertTrue(m.run("aaaaaaaaaaaaaaaa"));
-        XCTAssertFalse(m.run("aaaaaaaaaaaaaaaab"));
-        XCTAssertFalse(m.run("aaaaaabaaaaaaaaaa"));
-        XCTAssertFalse(m.run("baaaaaaaaaaaaaaaa"));
+    [self runMachinesWithRegex:"a+" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m(""));
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("aa"));
+        XCTAssertTrue(m("aaaaaaaaaaaaaaaa"));
+        XCTAssertFalse(m("aaaaaaaaaaaaaaaab"));
+        XCTAssertFalse(m("aaaaaabaaaaaaaaaa"));
+        XCTAssertFalse(m("baaaaaaaaaaaaaaaa"));
     }];
 }
 
 - (void)testOrderOfOperations {
-    [self runMachinesWithRegex:"a(bc)" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("abc"));
+    [self runMachinesWithRegex:"a(bc)" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("abc"));
     }];
-    [self runMachinesWithRegex:"(ab)c" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("abc"));
+    [self runMachinesWithRegex:"(ab)c" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("abc"));
     }];
-    [self runMachinesWithRegex:"(ab)*" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run(""));
-        XCTAssertTrue(m.run("ab"));
-        XCTAssertTrue(m.run("ababab"));
-        XCTAssertFalse(m.run("a"));
-        XCTAssertFalse(m.run("ababa"));
+    [self runMachinesWithRegex:"(ab)*" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m(""));
+        XCTAssertTrue(m("ab"));
+        XCTAssertTrue(m("ababab"));
+        XCTAssertFalse(m("a"));
+        XCTAssertFalse(m("ababa"));
     }];
-    [self runMachinesWithRegex:"ab|cd" tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run(""));
-        XCTAssertTrue(m.run("ab"));
-        XCTAssertTrue(m.run("cd"));
-        XCTAssertFalse(m.run("a"));
-        XCTAssertFalse(m.run("c"));
-        XCTAssertFalse(m.run("abcd"));
+    [self runMachinesWithRegex:"ab|cd" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m(""));
+        XCTAssertTrue(m("ab"));
+        XCTAssertTrue(m("cd"));
+        XCTAssertFalse(m("a"));
+        XCTAssertFalse(m("c"));
+        XCTAssertFalse(m("abcd"));
     }];
-    [self runMachinesWithRegex:"ab*" tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run(""));
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("ab"));
-        XCTAssertTrue(m.run("abbb"));
-        XCTAssertFalse(m.run("abab"));
+    [self runMachinesWithRegex:"ab*" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m(""));
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("ab"));
+        XCTAssertTrue(m("abbb"));
+        XCTAssertFalse(m("abab"));
     }];
-    [self runMachinesWithRegex:"a|b*" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run(""));
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("b"));
-        XCTAssertTrue(m.run("bbbb"));
-        XCTAssertFalse(m.run("abab"));
+    [self runMachinesWithRegex:"a|b*" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m(""));
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("b"));
+        XCTAssertTrue(m("bbbb"));
+        XCTAssertFalse(m("abab"));
     }];
-    [self runMachinesWithRegex:"(a|b)*" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run(""));
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("b"));
-        XCTAssertTrue(m.run("abbabbbbbbaaabbbbbbbbbb"));
-        XCTAssertFalse(m.run("q"));
+    [self runMachinesWithRegex:"(a|b)*" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m(""));
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("b"));
+        XCTAssertTrue(m("abbabbbbbbaaabbbbbbbbbb"));
+        XCTAssertFalse(m("q"));
     }];
-    [self runMachinesWithRegex:"[ab]*" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run(""));
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("b"));
-        XCTAssertTrue(m.run("abbabbbbbbaaabbbbbbbbbb"));
-        XCTAssertFalse(m.run("q"));
+    [self runMachinesWithRegex:"[ab]*" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m(""));
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("b"));
+        XCTAssertTrue(m("abbabbbbbbaaabbbbbbbbbb"));
+        XCTAssertFalse(m("q"));
     }];
 }
 
 - (void)testEscape {
-    [self runMachinesWithRegex:"\\." tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run("a"));
-        XCTAssertTrue(m.run("."));
+    [self runMachinesWithRegex:"\\." tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m("a"));
+        XCTAssertTrue(m("."));
     }];
-    [self runMachinesWithRegex:"\\[" tests:^(Regex::Machine &m) {
-        XCTAssertFalse(m.run("a"));
-        XCTAssertTrue(m.run("["));
+    [self runMachinesWithRegex:"\\[" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertFalse(m("a"));
+        XCTAssertTrue(m("["));
     }];
 }
 
 - (void)testCharacterRange {
-    [self runMachinesWithRegex:"[a]" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("a"));
-        XCTAssertFalse(m.run("ab"));
+    [self runMachinesWithRegex:"[a]" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("a"));
+        XCTAssertFalse(m("ab"));
     }];
-    [self runMachinesWithRegex:"[a-c]" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("b"));
-        XCTAssertTrue(m.run("c"));
-        XCTAssertFalse(m.run("ab"));
-        XCTAssertFalse(m.run("d"));
+    [self runMachinesWithRegex:"[a-c]" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("b"));
+        XCTAssertTrue(m("c"));
+        XCTAssertFalse(m("ab"));
+        XCTAssertFalse(m("d"));
     }];
-    [self runMachinesWithRegex:"[abc]" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("b"));
-        XCTAssertTrue(m.run("c"));
-        XCTAssertFalse(m.run("d"));
-        XCTAssertFalse(m.run("ab"));
+    [self runMachinesWithRegex:"[abc]" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("b"));
+        XCTAssertTrue(m("c"));
+        XCTAssertFalse(m("d"));
+        XCTAssertFalse(m("ab"));
     }];
-    [self runMachinesWithRegex:"[ac-e]" tests:^(Regex::Machine &m) {
-        XCTAssertTrue(m.run("a"));
-        XCTAssertTrue(m.run("c"));
-        XCTAssertTrue(m.run("d"));
-        XCTAssertTrue(m.run("e"));
-        XCTAssertFalse(m.run("b"));
+    [self runMachinesWithRegex:"[ac-e]" tests:^(const std::function<bool(const std::string&)>& m) {
+        XCTAssertTrue(m("a"));
+        XCTAssertTrue(m("c"));
+        XCTAssertTrue(m("d"));
+        XCTAssertTrue(m("e"));
+        XCTAssertFalse(m("b"));
     }];
 }
 @end
-
 
 @interface RegexPerformanceTests : XCTestCase
 
@@ -224,7 +223,7 @@
     __block Regex::JIT jit(Regex::jit(".*a.*", success));
     XCTAssertTrue(success);
     [self measureBlock:^{
-        jit.run(haystack);
+        jit(haystack);
     }];
 }
 
@@ -233,7 +232,7 @@
     __block Regex::Interpreter interpreter(Regex::interpret(".*a.*", success));
     XCTAssertTrue(success);
     [self measureBlock:^{
-        interpreter.run(haystack);
+        interpreter(haystack);
     }];
 }
 @end

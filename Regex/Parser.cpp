@@ -10,7 +10,7 @@
 
 namespace Regex {
 
-Parser::Parser(std::string string) : string(string), stringIndex(0), failed(false) {
+Parser::Parser(const std::string& string) : string(string), stringIndex(0), failed(false) {
 }
 
 NFAHandle Parser::alternate(NFAHandle a, NFAHandle b) {

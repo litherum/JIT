@@ -11,33 +11,18 @@
 
 #include <memory>
 
-#include "DFA.h"
-#include "Machine.h"
-
 namespace Regex {
+class DFA;
 
-class JIT: public Machine {
+class JIT {
 public:
-    JIT(const DFA& dfa);
-    
-    virtual bool run(const std::string& s) const override;
+    JIT(const DFA&);
+    bool operator()(const std::string& s) const;
     
 private:
     class Tracker;
-    
-    class Unmapper {
-    public:
-        void operator()(void* ptr) const;
-        
-        void setLength(size_t length) {
-            this->length = length;
-        }
-        
-    private:
-        size_t length;
-    };
-    
-    std::unique_ptr<void, Unmapper> machineCode;
+
+    std::shared_ptr<void> machineCode;
 };
 
 }

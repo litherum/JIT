@@ -13,7 +13,7 @@
 
 namespace Regex {
 
-JIT jit(std::string s, bool& success);
-Interpreter interpret(std::string s, bool& success);
+JIT jit(const std::string& s, bool& success);
+Interpreter interpret(const std::string& s, bool& success);
 
 }

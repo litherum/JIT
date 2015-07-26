@@ -14,7 +14,7 @@
 
 namespace Regex {
 
-JIT jit(std::string s, bool& success) {
+JIT jit(const std::string& s, bool& success) {
     Parser parser(s);
     if (!parser.parse()) {
         success = false;
@@ -24,7 +24,7 @@ JIT jit(std::string s, bool& success) {
     return JIT(DFA(parser.takeNFA()));
 }
 
-Interpreter interpret(std::string s, bool& success) {
+Interpreter interpret(const std::string& s, bool& success) {
     Parser parser(s);
     if (!parser.parse()) {
         success = false;

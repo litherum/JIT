@@ -6,18 +6,50 @@
 //  Copyright (c) 2015 Litherum. All rights reserved.
 //
 
+#include <cassert>
 #include <map>
 #include <queue>
-#include <set>
-#include <cassert>
-#include <iostream>
 
 #include "DFA.h"
+
 #include "NFA.h"
 
 namespace Regex {
 
 const DFANode DFA::invalidNode = std::numeric_limits<DFANode>::max();
+
+void DFA::addEdge(DFANode source, char c, DFANode destination) {
+    assert(source < incidence.size());
+    incidence[source].emplace(std::make_pair(c, destination));
+}
+
+DFANode DFA::follow(DFANode source, char c) const {
+    assert(source < incidence.size());
+    const auto& m(incidence[source]);
+    const auto& iter(m.find(c));
+    if (iter == m.end())
+        return invalidNode;
+    return iter->second;
+}
+
+std::size_t DFA::size() const {
+    return incidence.size();
+}
+
+bool DFA::isEndNode(DFANode node) const {
+    return endNodes.find(node) != endNodes.end();
+}
+
+void DFA::iterateNodes(std::function<void(DFANode)> callback) const {
+    for (DFANode i(0); i < incidence.size(); ++i)
+        callback(i);
+}
+
+void DFA::iterateEdges(DFANode source, std::function<void(char, DFANode)> callback) const {
+    assert(source < incidence.size());
+    for (const auto& iter : incidence[source])
+        callback(iter.first, iter.second);
+}
 
 static NFANodeCollection epsilonClosure(const NFANode& node) {
     NFANodeCollection result;

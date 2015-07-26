@@ -30,7 +30,7 @@ namespace Regex {
 
 class Parser {
 public:
-    Parser(std::string string);
+    Parser(const std::string& string);
 
     bool parse() {
         regexparse(this);

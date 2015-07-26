@@ -17,10 +17,12 @@
 		C285E6B91B65627F008CC012 /* NFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C285E6B81B65627F008CC012 /* NFA.cpp */; };
 		C285E6BA1B65641F008CC012 /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C261FDE71B5F531500CBC1BF /* JIT.cpp */; };
 		C285E6BB1B656428008CC012 /* ParserGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */; };
-		C285E6BD1B6564B1008CC012 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE81B5F531500CBC1BF /* JIT.h */; };
-		C285E6BE1B6564F0008CC012 /* Machine.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE31B5F522700CBC1BF /* Machine.h */; };
-		C285E6BF1B656514008CC012 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE51B5F525000CBC1BF /* Interpreter.h */; };
-		C285E6C01B656530008CC012 /* DFA.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE11B5F51B100CBC1BF /* DFA.h */; };
+		C285E6BD1B6564B1008CC012 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE81B5F531500CBC1BF /* JIT.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C285E6BF1B656514008CC012 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE51B5F525000CBC1BF /* Interpreter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C285E6C01B656530008CC012 /* DFA.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDE11B5F51B100CBC1BF /* DFA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C2DAAB141B65968900D85791 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = C2EA47B11B62C530007FEB66 /* Parser.h */; };
+		C2DAAB151B65969000D85791 /* NFA.h in Headers */ = {isa = PBXBuildFile; fileRef = C261FDDE1B5F4F8D00CBC1BF /* NFA.h */; };
+		C2DAAB161B6596A700D85791 /* ParserGrammar.hpp in Headers */ = {isa = PBXBuildFile; fileRef = C285E6C41B65738E008CC012 /* ParserGrammar.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +41,6 @@
 		C261FDDE1B5F4F8D00CBC1BF /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		C261FDE01B5F51B100CBC1BF /* DFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFA.cpp; sourceTree = "<group>"; };
 		C261FDE11B5F51B100CBC1BF /* DFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFA.h; sourceTree = "<group>"; };
-		C261FDE31B5F522700CBC1BF /* Machine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Machine.h; sourceTree = "<group>"; };
 		C261FDE51B5F525000CBC1BF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
 		C261FDE71B5F531500CBC1BF /* JIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JIT.cpp; sourceTree = "<group>"; };
 		C261FDE81B5F531500CBC1BF /* JIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIT.h; sourceTree = "<group>"; };
@@ -101,7 +102,6 @@
 				C285E6B81B65627F008CC012 /* NFA.cpp */,
 				C261FDE11B5F51B100CBC1BF /* DFA.h */,
 				C261FDE01B5F51B100CBC1BF /* DFA.cpp */,
-				C261FDE31B5F522700CBC1BF /* Machine.h */,
 				C261FDE51B5F525000CBC1BF /* Interpreter.h */,
 				C285E6B61B656117008CC012 /* Interpreter.cpp */,
 				C261FDE81B5F531500CBC1BF /* JIT.h */,
@@ -134,9 +134,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2DAAB151B65969000D85791 /* NFA.h in Headers */,
 				C285E6BD1B6564B1008CC012 /* JIT.h in Headers */,
-				C285E6BE1B6564F0008CC012 /* Machine.h in Headers */,
+				C2DAAB161B6596A700D85791 /* ParserGrammar.hpp in Headers */,
 				C285E6C01B656530008CC012 /* DFA.h in Headers */,
+				C2DAAB141B65968900D85791 /* Parser.h in Headers */,
 				C285E69C1B655C96008CC012 /* Regex.h in Headers */,
 				C285E6BF1B656514008CC012 /* Interpreter.h in Headers */,
 			);

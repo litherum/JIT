@@ -6,12 +6,16 @@
 //  Copyright (c) 2015 Litherum. All rights reserved.
 //
 
-#include <set>
-#include <vector>
-#include <cassert>
 #include <sys/mman.h>
 
+#include <cassert>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 #include "JIT.h"
+
+#include "DFA.h"
 
 #if !defined(__x86_64__) || !defined(__APPLE__)
 #error Requires x86_64 on OS X!
@@ -160,10 +164,10 @@ private:
     size_t failLocation;
     size_t epilogueLocation;
     std::vector<uint8_t> machineCode;
-    std::set<size_t> nextCharAddressLocations;
-    std::set<size_t> successAddressLocations;
-    std::set<size_t> failAddressLocations;
-    std::set<size_t> epilogueAddressLocations;
+    std::unordered_set<size_t> nextCharAddressLocations;
+    std::unordered_set<size_t> successAddressLocations;
+    std::unordered_set<size_t> failAddressLocations;
+    std::unordered_set<size_t> epilogueAddressLocations;
     std::vector<std::pair<size_t, DFANode>> nodeAddressLocations;
     std::vector<std::size_t> stateLocations;
 };
@@ -194,17 +198,32 @@ private:
     std::string s;
     void* machineCode;
 };
+    
+class Unmapper {
+public:
+    Unmapper(std::size_t size): size(size) {
+    }
+
+    void operator()(void* ptr) const {
+        int ret(munmap(ptr, size));
+        if (ret != 0)
+            perror("Unmap failed");
+        assert(ret == 0);
+    }
+
+private:
+    std::size_t size;
+};
 
 JIT::JIT(const DFA& dfa) {
     CodeGenerator codeGenerator(dfa);
     std::vector<uint8_t> code(codeGenerator.takeMachineCode());
-    machineCode.reset(mmap(NULL, code.size(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0));
+    machineCode = std::shared_ptr<void>(mmap(NULL, code.size(), PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANON, -1, 0), Unmapper(code.size()));
     if (machineCode.get() == MAP_FAILED)
         perror("Map failed");
     assert(machineCode.get() != MAP_FAILED);
     memcpy(machineCode.get(), code.data(), code.size());
-    machineCode.get_deleter().setLength(code.size());
-    
+
     for (size_t i : codeGenerator.takeNextCharAddressLocations()) {
         uint8_t* location(reinterpret_cast<uint8_t*>(machineCode.get()) + i);
         uint8_t* pc(location + 4);
@@ -215,16 +234,9 @@ JIT::JIT(const DFA& dfa) {
     }
 }
 
-bool JIT::run(const std::string& s) const {
+bool JIT::operator()(const std::string& s) const {
     Tracker t(s, machineCode.get());
     return t.run();
-}
-
-void JIT::Unmapper::operator()(void* ptr) const {
-    int ret(munmap(ptr, length));
-    if (ret != 0)
-        perror("Unmap failed");
-    assert(ret == 0);
 }
 
 }

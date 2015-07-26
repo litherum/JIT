@@ -9,11 +9,6 @@
 #ifndef __Regex__DFA__
 #define __Regex__DFA__
 
-#include <cassert>
-#include <limits>
-#include <map>
-#include <memory>
-#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -29,41 +24,14 @@ public:
     static const DFANode invalidNode;
 
     DFA(const NFA&);
-
-    void addEdge(DFANode source, char c, DFANode destination) {
-        assert(source < incidence.size());
-        incidence[source].insert(std::make_pair(c, destination));
-    }
-
-    DFANode follow(DFANode source, char c) const {
-        assert(source < incidence.size());
-        const auto& m(incidence[source]);
-        const auto& iter(m.find(c));
-        if (iter == m.end())
-            return invalidNode;
-        return iter->second;
-    }
-
-    std::size_t size() const {
-        return incidence.size();
-    }
-
-    bool isEndNode(DFANode node) const {
-        return endNodes.find(node) != endNodes.end();
-    }
-    
-    template<typename T>
-    void iterateNodes(T callback) const {
-        for (DFANode i(0); i < incidence.size(); ++i)
-            callback(i);
-    }
-    
-    template<typename T>
-    void iterateEdges(DFANode source, T callback) const {
-        assert(source < incidence.size());
-        for (const auto& iter : incidence[source])
-            callback(iter.first, iter.second);
-    }
+    void addEdge(DFANode source, char c, DFANode destination);
+    DFANode follow(DFANode source, char c) const;
+    std::size_t size() const;
+    bool isEndNode(DFANode node) const;
+    // Autoboxing to std::function is worse than templates, but this file is API and I don't want
+    // to expose implementation
+    void iterateNodes(std::function<void(DFANode)> callback) const;
+    void iterateEdges(DFANode source, std::function<void(char, DFANode)> callback) const;
 
 private:
     // Could make the map into a std::array because chars are so small, but this is more general.

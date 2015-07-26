@@ -13,7 +13,7 @@ namespace Regex {
 Interpreter::Interpreter(const DFA& dfa): dfa(dfa) {
 }
     
-bool Interpreter::run(const std::string& s) const {
+bool Interpreter::operator()(const std::string& s) const {
     DFANode state(0);
     for (char c : s) {
         state = dfa.follow(state, c);

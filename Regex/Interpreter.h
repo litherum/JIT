@@ -12,14 +12,13 @@
 #include <string>
 
 #include "DFA.h"
-#include "Machine.h"
 
 namespace Regex {
 
-class Interpreter: public Machine {
+class Interpreter {
 public:
     Interpreter(const DFA& dfa);
-    virtual bool run(const std::string& s) const override;
+    bool operator()(const std::string& s) const;
     
 private:
     DFA dfa;
