@@ -155,6 +155,13 @@
         XCTAssertTrue(m.run("abbabbbbbbaaabbbbbbbbbb"));
         XCTAssertFalse(m.run("q"));
     }];
+    [self runMachinesWithRegex:"[ab]*" tests:^(Regex::Machine &m) {
+        XCTAssertTrue(m.run(""));
+        XCTAssertTrue(m.run("a"));
+        XCTAssertTrue(m.run("b"));
+        XCTAssertTrue(m.run("abbabbbbbbaaabbbbbbbbbb"));
+        XCTAssertFalse(m.run("q"));
+    }];
 }
 
 - (void)testEscape {
@@ -169,16 +176,30 @@
 }
 
 - (void)testCharacterRange {
-    //[self runMachinesWithRegex:"[a]" tests:^(Regex::Machine &m) {
-    //    XCTAssertTrue(m.run("a"));
-    //    XCTAssertFalse(m.run("ab"));
-    //}];
+    [self runMachinesWithRegex:"[a]" tests:^(Regex::Machine &m) {
+        XCTAssertTrue(m.run("a"));
+        XCTAssertFalse(m.run("ab"));
+    }];
+    [self runMachinesWithRegex:"[a-c]" tests:^(Regex::Machine &m) {
+        XCTAssertTrue(m.run("a"));
+        XCTAssertTrue(m.run("b"));
+        XCTAssertTrue(m.run("c"));
+        XCTAssertFalse(m.run("ab"));
+        XCTAssertFalse(m.run("d"));
+    }];
     [self runMachinesWithRegex:"[abc]" tests:^(Regex::Machine &m) {
         XCTAssertTrue(m.run("a"));
         XCTAssertTrue(m.run("b"));
         XCTAssertTrue(m.run("c"));
         XCTAssertFalse(m.run("d"));
-        XCTAssertFalse(m.run("abc"));
+        XCTAssertFalse(m.run("ab"));
+    }];
+    [self runMachinesWithRegex:"[ac-e]" tests:^(Regex::Machine &m) {
+        XCTAssertTrue(m.run("a"));
+        XCTAssertTrue(m.run("c"));
+        XCTAssertTrue(m.run("d"));
+        XCTAssertTrue(m.run("e"));
+        XCTAssertFalse(m.run("b"));
     }];
 }
 

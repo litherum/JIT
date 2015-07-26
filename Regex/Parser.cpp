@@ -58,7 +58,7 @@ NFAHandle Parser::dot() {
 CSetHandle Parser::crange(char c) {
     CSet result = { c };
     csetStorage.emplace_back(std::move(result));
-    return nfaStorage.size() - 1;
+    return csetStorage.size() - 1;
 }
 
 CSetHandle Parser::crange(char a, char b) {
@@ -67,7 +67,7 @@ CSetHandle Parser::crange(char a, char b) {
     for (int i = a; i <= b; ++i)
         result.insert(i);
     csetStorage.emplace_back(std::move(result));
-    return nfaStorage.size() - 1;
+    return csetStorage.size() - 1;
 }
 
 CSetHandle Parser::csetUnion(CSetHandle a, CSetHandle b) {
@@ -125,6 +125,7 @@ int regexlex(YYSTYPE *lvalp, Regex::Parser* parser)
     case ')':
     case '[':
     case ']':
+    case '-':
     case '.':
         return c;
     default:
