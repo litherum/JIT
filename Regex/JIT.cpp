@@ -140,7 +140,7 @@ public:
         return std::move(machineCode);
     }
     
-    std::set<size_t> takeNextCharAddressLocations() {
+    std::unordered_set<size_t> takeNextCharAddressLocations() {
         return std::move(nextCharAddressLocations);
     }
     
