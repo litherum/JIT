@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import <Regex/Regex.h>
+#import <sstream>
 
 @interface RegexTests : XCTestCase
 
@@ -202,12 +203,41 @@
         XCTAssertFalse(m.run("b"));
     }];
 }
+@end
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
+
+@interface RegexPerformanceTests : XCTestCase
+
+@end
+
+@implementation RegexPerformanceTests {
+    std::string haystack;
+}
+
+- (void)setUp {
+    std::ostringstream ss;
+    for (int i = 0; i < 1000000; ++i)
+        ss << "sdfg";
+    haystack = ss.str();
+}
+
+- (void)testJITPerformance {
+    bool success;
+    __block Regex::JIT jit(Regex::jit(".*a.*", success));
+    if (!success)
+        XCTFail();
     [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+        jit.run(haystack);
     }];
 }
 
+- (void)testInterpreterPerformance {
+    bool success;
+    __block Regex::Interpreter interpreter(Regex::interpret(".*a.*", success));
+    if (!success)
+        XCTFail();
+    [self measureBlock:^{
+        interpreter.run(haystack);
+    }];
+}
 @end
