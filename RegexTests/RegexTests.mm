@@ -19,13 +19,11 @@
 - (void)runMachinesWithRegex:(std::string)regex tests:(void(^)(Regex::Machine&))block {
     bool success;
     Regex::JIT jit(Regex::jit(regex, success));
-    if (!success)
-        XCTFail();
+    XCTAssertTrue(success);
     block(jit);
 
     Regex::Interpreter intepreter(Regex::interpret(regex, success));
-    if (!success)
-        XCTFail();
+    XCTAssertTrue(success);
     block(intepreter);
 }
 
@@ -224,8 +222,7 @@
 - (void)testJITPerformance {
     bool success;
     __block Regex::JIT jit(Regex::jit(".*a.*", success));
-    if (!success)
-        XCTFail();
+    XCTAssertTrue(success);
     [self measureBlock:^{
         jit.run(haystack);
     }];
@@ -234,8 +231,7 @@
 - (void)testInterpreterPerformance {
     bool success;
     __block Regex::Interpreter interpreter(Regex::interpret(".*a.*", success));
-    if (!success)
-        XCTFail();
+    XCTAssertTrue(success);
     [self measureBlock:^{
         interpreter.run(haystack);
     }];
