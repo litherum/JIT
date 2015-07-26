@@ -57,6 +57,7 @@ public:
     NFAHandle concatenate(NFAHandle a, NFAHandle b);
     NFAHandle literal(char c);
     NFAHandle epsilon();
+    NFAHandle dot();
     CSetHandle crange(char c);
     CSetHandle crange(char a, char b);
     CSetHandle csetUnion(CSetHandle a, CSetHandle b);

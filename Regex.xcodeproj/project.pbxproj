@@ -35,7 +35,7 @@
 
 /* Begin PBXFileReference section */
 		C2330B021B62227200A3003A /* ParserGrammar.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = ParserGrammar.y; sourceTree = "<group>"; };
-		C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserGrammar.cpp; sourceTree = "<group>"; };
+		C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParserGrammar.cpp; path = DerivedSources/ParserGrammar.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		C261FDDE1B5F4F8D00CBC1BF /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		C261FDE01B5F51B100CBC1BF /* DFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFA.cpp; sourceTree = "<group>"; };
 		C261FDE11B5F51B100CBC1BF /* DFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFA.h; sourceTree = "<group>"; };
@@ -53,6 +53,7 @@
 		C285E6B41B656091008CC012 /* Regex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Regex.cpp; sourceTree = "<group>"; };
 		C285E6B61B656117008CC012 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
 		C285E6B81B65627F008CC012 /* NFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NFA.cpp; sourceTree = "<group>"; };
+		C285E6C41B65738E008CC012 /* ParserGrammar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ParserGrammar.hpp; path = DerivedSources/ParserGrammar.hpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2EA47B11B62C530007FEB66 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,9 +106,10 @@
 				C285E6B61B656117008CC012 /* Interpreter.cpp */,
 				C261FDE81B5F531500CBC1BF /* JIT.h */,
 				C261FDE71B5F531500CBC1BF /* JIT.cpp */,
-				C2330B021B62227200A3003A /* ParserGrammar.y */,
 				C2EA47B11B62C530007FEB66 /* Parser.h */,
 				C285E6B01B655E92008CC012 /* Parser.cpp */,
+				C2330B021B62227200A3003A /* ParserGrammar.y */,
+				C285E6C41B65738E008CC012 /* ParserGrammar.hpp */,
 				C24FFBF51B62D7F100586733 /* ParserGrammar.cpp */,
 				C285E69B1B655C96008CC012 /* Regex.h */,
 				C285E6B41B656091008CC012 /* Regex.cpp */,
@@ -147,6 +149,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C285E6AA1B655C96008CC012 /* Build configuration list for PBXNativeTarget "Regex" */;
 			buildPhases = (
+				C285E6C11B656F2B008CC012 /* ShellScript */,
 				C285E6941B655C96008CC012 /* Sources */,
 				C285E6951B655C96008CC012 /* Frameworks */,
 				C285E6961B655C96008CC012 /* Headers */,
@@ -230,6 +233,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C285E6C11B656F2B008CC012 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Regex/ParserGrammar.y",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/ParserGrammar.cpp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "outdir=\"${BUILT_PRODUCTS_DIR}/DerivedSources\"\nif [ ! -d \"$outdir\" ]; then\n    mkdir \"$outdir\";\nfi\n\n${YACC} -p regex -d -b Regex -o \"$outdir/ParserGrammar.cpp\" \"${SRCROOT}/Regex/ParserGrammar.y\"";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C285E6941B655C96008CC012 /* Sources */ = {
@@ -435,6 +457,7 @@
 				C285E6AC1B655C96008CC012 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C285E6AD1B655C96008CC012 /* Build configuration list for PBXNativeTarget "RegexTests" */ = {
 			isa = XCConfigurationList;
@@ -443,6 +466,7 @@
 				C285E6AF1B655C96008CC012 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

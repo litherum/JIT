@@ -15,7 +15,7 @@ NFAHandle i;
 CSetHandle s;
 }
 
-%token <c> CHARACTER
+%token <c> CHARACTER DOT
 %type <i> base factor term regex cclass
 %type <s> cset crange
 
@@ -33,6 +33,7 @@ factor: base              { $$ = $1;                          }
 | factor '+'              { $$ = parser->plus($1);            }
 ;
 base: CHARACTER           { $$ = parser->literal($1);         }
+| '.'                     { $$ = parser->dot();               }
 | '[' cclass ']'          { $$ = $2;                          }
 | '(' regex ')'           { $$ = $2;                          }
 ;

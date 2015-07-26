@@ -47,6 +47,14 @@ NFAHandle Parser::epsilon() {
     return nfaStorage.size() - 1;
 }
 
+NFAHandle Parser::dot() {
+    CSet s;
+    static_assert(sizeof(int) > sizeof(char), "std::numeric_limits<char>::max() + 1 needs to be representable by int");
+    for (int i = 1; i <= std::numeric_limits<char>::max(); ++i)
+        s.insert(i);
+    return csetImpl(s);
+}
+
 CSetHandle Parser::crange(char c) {
     CSet result = { c };
     csetStorage.emplace_back(std::move(result));
@@ -112,8 +120,12 @@ int regexlex(YYSTYPE *lvalp, Regex::Parser* parser)
         return 0;
     case '|':
     case '*':
+    case '+':
     case '(':
     case ')':
+    case '[':
+    case ']':
+    case '.':
         return c;
     default:
         lvalp->c = c;
