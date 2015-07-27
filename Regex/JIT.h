@@ -20,8 +20,6 @@ public:
     bool operator()(const std::string& s) const;
     
 private:
-    class Tracker;
-
     std::shared_ptr<void> machineCode;
 };
 

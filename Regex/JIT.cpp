@@ -172,13 +172,13 @@ private:
     std::vector<std::size_t> stateLocations;
 };
 
-class JIT::Tracker {
+class Tracker {
 public:
     Tracker(const std::string& s, void* machineCode): index(0), s(s), machineCode(machineCode) {
     }
     
     bool run() {
-        bool (JIT::Tracker::*callMe)()(nullptr);
+        bool (Tracker::*callMe)()(nullptr);
         // AFAICT, we have to drop down to asm to cast a void* to a pointer to member function
         // Note that a pointer to a member function is actually a tuple.
         asm("movq %1, %0" : "=m" (callMe) : "r" (machineCode));
